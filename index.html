@@ -329,6 +329,45 @@
   }
   .success-stat b{display:block;font-family:'Fraunces',serif;font-size:1.5rem;color:var(--teal-900);}
   .success-stat span{font-size:0.78rem;color:var(--ink-soft);}
+    /* ---------- Loading states ---------- */
+  .skeleton{
+    display:inline-block;border-radius:6px;color:transparent !important;
+    background:linear-gradient(90deg,var(--aqua-100) 25%,#F7FCFB 50%,var(--aqua-100) 75%);
+    background-size:200% 100%;animation:shimmer 1.2s ease-in-out infinite;
+  }
+  .skeleton.q{width:76px;height:32px;}
+  .skeleton.t{width:108px;height:24px;}
+  .skeleton.line{width:210px;height:18px;vertical-align:-3px;
+    background:linear-gradient(90deg,rgba(255,255,255,.14) 25%,rgba(255,255,255,.30) 50%,rgba(255,255,255,.14) 75%);
+    background-size:200% 100%;}
+  @keyframes shimmer{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
+
+  .spinner{width:15px;height:15px;border-radius:50%;display:inline-block;
+    border:2px solid var(--line);border-top-color:var(--teal-700);
+    animation:spin .7s linear infinite;flex-shrink:0;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  .loading-note{display:none;align-items:center;gap:8px;margin-top:12px;
+    font-size:0.84rem;font-weight:600;color:var(--ink-soft);}
+  .loading-note.show{display:flex;}
+
+  .modal{position:relative;}
+  .modal-overlay{
+    position:absolute;inset:0;border-radius:var(--radius-lg);z-index:5;
+    background:rgba(251,250,246,0.82);backdrop-filter:blur(2px);
+    display:none;flex-direction:column;align-items:center;justify-content:center;
+    gap:14px;text-align:center;padding:24px;
+  }
+  .modal-overlay.show{display:flex;}
+  .modal-overlay .big-spin{width:44px;height:44px;border-radius:50%;
+    border:3px solid var(--aqua-100);border-top-color:var(--teal-700);
+    animation:spin .8s linear infinite;}
+  .modal-overlay b{font-family:'Fraunces',serif;font-size:1.15rem;font-weight:600;}
+  .modal-overlay span{font-size:0.88rem;color:var(--ink-soft);max-width:28ch;}
+
+  @media (prefers-reduced-motion:reduce){
+    .skeleton{animation:none;} .spinner,.big-spin{animation-duration:1.6s;}
+  }
 </style>
 </head>
 <body>
@@ -518,6 +557,12 @@
           </div>
         </div>
 
+        <div class="loading-note" id="previewLoading">
+          <span class="spinner"></span> Checking…
+        </div>
+
+        <br>
+
         <div class="field">
           <label for="fld-name">Full name</label>
           <input id="fld-name" type="text" placeholder="e.g. Kavindu Perera" autocomplete="name">
@@ -561,6 +606,13 @@
         </div>
         <button class="btn-confirm" onclick="closeBookingModal()">Done</button>
       </div>
+    </div>
+
+    <!-- submit / busy overlay -->
+    <div class="modal-overlay" id="modalOverlay" aria-live="polite">
+      <div class="big-spin"></div>
+      <b id="overlayTitle">Confirming your slot…</b>
+      <span id="overlayNote">Saving your details and locking your queue number.</span>
     </div>
 
   </div>
@@ -637,17 +689,21 @@
     return { state:"open", openAt, closeAt, now };
   }
 
-  /* ---------- hero panel ---------- */
+/* ---------- hero panel ---------- */
+  let heroLoaded = false;
   async function renderHeroPanel(){
     const ws = windowState();
     const statusBox = document.getElementById("windowStatus");
-    const headline = document.getElementById("statusHeadline");
-    const sub = document.getElementById("statusSub");
-    const fill = document.getElementById("windowBarFill");
+    const headline  = document.getElementById("statusHeadline");
+    const sub       = document.getElementById("statusSub");
+    const fill      = document.getElementById("windowBarFill");
+    const label     = document.getElementById("queueTodayLabel");
+
+    if (!heroLoaded) label.innerHTML = '<span class="skeleton line"></span>';
 
     const count = await fetchServerCount();
-    document.getElementById("queueTodayLabel").textContent =
-      `${count} patient${count === 1 ? "" : "s"} booked so far today`;
+    heroLoaded = true;
+    label.textContent = `${count} patient${count === 1 ? "" : "s"} booked so far today`;
 
     if (ws.state === "before"){
       statusBox.classList.add("closed");
@@ -707,17 +763,50 @@
   });
   document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeBookingModal(); });
 
+    /* ---------- form reset with loading state ---------- */
+  let previewRequestId = 0;           // guards against a stale slow response
   async function resetForm(){
     ["fld-name","fld-phone","fld-age"].forEach(id => document.getElementById(id).value = "");
     document.getElementById("formError").classList.remove("show");
-    document.getElementById("previewQueue").textContent = "…";
-    document.getElementById("previewTime").textContent = "…";
 
-    const count = await fetchServerCount();
-    const slot = slotFromCount(count);
-    document.getElementById("previewQueue").textContent = "#" + String(slot.queueNumber).padStart(2,"0");
-    document.getElementById("previewTime").textContent = slot.timeLabel;
+    const qEl  = document.getElementById("previewQueue");
+    const tEl  = document.getElementById("previewTime");
+    const note = document.getElementById("previewLoading");
+    const btn  = document.getElementById("confirmBtn");
+    const myId = ++previewRequestId;
+
+    // loading: placeholder text keeps the layout from jumping
+    qEl.textContent = "#00";      qEl.classList.add("skeleton","q");
+    tEl.textContent = "00:00 PM"; tEl.classList.add("skeleton","t");
+    note.classList.add("show");
+    btn.disabled = true;
+    btn.textContent = "Checking availability…";
+
+    let ok = true;
+    try{
+      const count = await fetchServerCount();
+      if (myId !== previewRequestId) return;   // modal was reopened, ignore
+      const slot = slotFromCount(count);
+      qEl.textContent = "#" + String(slot.queueNumber).padStart(2,"0");
+      tEl.textContent = slot.timeLabel;
+    }catch(err){
+      ok = false;
+      qEl.textContent = "—";
+      tEl.textContent = "—";
+      const errBox = document.getElementById("formError");
+      errBox.textContent = "Couldn't load today's queue. Check your connection and reopen this form.";
+      errBox.classList.add("show");
+    }finally{
+      if (myId === previewRequestId){
+        qEl.classList.remove("skeleton","q");
+        tEl.classList.remove("skeleton","t");
+        note.classList.remove("show");
+        btn.disabled = !ok;
+        btn.textContent = "Accept & Confirm Slot";
+      }
+    }
   }
+
 
   /* ---------- validation + confirm ---------- */
   function validateForm(){
@@ -745,8 +834,25 @@
     return true;
   }
 
+  /* ---------- confirm with submit overlay ---------- */
+  let slowTimer = null;
+  function showOverlay(on){
+    const ov = document.getElementById("modalOverlay");
+    ov.classList.toggle("show", on);
+    clearTimeout(slowTimer);
+    if (on){
+      document.getElementById("overlayTitle").textContent = "Confirming your slot…";
+      document.getElementById("overlayNote").textContent  = "Saving your details and locking your queue number.";
+      // if the sheet is slow, reassure instead of looking frozen
+      slowTimer = setTimeout(() => {
+        document.getElementById("overlayTitle").textContent = "Still working…";
+        document.getElementById("overlayNote").textContent  =
+          "This is taking a little longer than usual. Please don't close this window.";
+      }, 5000);
+    }
+  }
+
   async function confirmBooking(){
-    // re-check the window in case it closed while the form was open
     const ws = windowState();
     if (ws.state !== "open"){
       document.getElementById("viewForm").style.display = "none";
@@ -755,36 +861,32 @@
       document.getElementById("viewClosed").style.display = "block";
       return;
     }
-
     if (!validateForm()) return;
 
-    const name = document.getElementById("fld-name").value.trim();
+    const name  = document.getElementById("fld-name").value.trim();
     const phone = document.getElementById("fld-phone").value.trim();
-    const age = document.getElementById("fld-age").value.trim();
+    const age   = document.getElementById("fld-age").value.trim();
 
     const confirmBtn = document.getElementById("confirmBtn");
     const errBox = document.getElementById("formError");
     confirmBtn.disabled = true;
-    confirmBtn.textContent = "Booking…";
+    confirmBtn.innerHTML = '<span class="spinner" style="border-color:rgba(255,255,255,.35);border-top-color:#fff"></span> Booking…';
+    showOverlay(true);
 
     try {
-      // The server assigns the REAL queue number/time from the sheet —
-      // this is what keeps two people booking at once from colliding,
-      // and what keeps every browser in sync.
       const result = await submitToGoogleSheet({
         name, phone, age, timestamp: new Date().toISOString()
       });
-
       document.getElementById("finalQueue").textContent = "#" + String(result.queueNumber).padStart(2,"0");
-      document.getElementById("finalTime").textContent = result.consultationTime;
+      document.getElementById("finalTime").textContent  = result.consultationTime;
       document.getElementById("viewForm").style.display = "none";
       document.getElementById("viewSuccess").style.display = "block";
-
     } catch (err) {
       errBox.textContent = "Could not save your booking — please check your connection and try again.";
       errBox.classList.add("show");
       console.error(err);
     } finally {
+      showOverlay(false);
       confirmBtn.disabled = false;
       confirmBtn.textContent = "Accept & Confirm Slot";
     }

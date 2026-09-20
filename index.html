@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ABC Health Medical Center — Book an Appointment</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --teal-900:#0F4C4C;
+    --teal-700:#12665F;
+    --teal-500:#2E8C82;
+    --aqua-100:#E4F3F1;
+    --aqua-50:#F3FAF9;
+    --ivory:#FBFAF6;
+    --ink:#182B2E;
+    --ink-soft:#4C6165;
+    --coral:#EF767A;
+    --coral-dark:#D65458;
+    --line:#CFE4E0;
+    --white:#FFFFFF;
+    --radius-sm:10px;
+    --radius-md:16px;
+    --radius-lg:26px;
+    --shadow-card: 0 1px 2px rgba(15,76,76,0.06), 0 8px 24px -12px rgba(15,76,76,0.18);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--ivory);
+    color:var(--ink);
+    font-family:'Manrope', sans-serif;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.serif{
+    font-family:'Fraunces', serif;
+    color:var(--ink);
+    letter-spacing:-0.01em;
+  }
+  a{color:inherit;}
+  img{max-width:100%;display:block;}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 24px;}
+  button{font-family:inherit;cursor:pointer;}
+  :focus-visible{outline:3px solid var(--teal-500);outline-offset:2px;}
+
+  /* ---------- Nav ---------- */
+  header.site{
+    position:sticky;top:0;z-index:40;
+    background:rgba(251,250,246,0.86);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav{display:flex;align-items:center;justify-content:space-between;padding:16px 24px;max-width:1180px;margin:0 auto;}
+  .brand{display:flex;align-items:center;gap:10px;font-family:'Fraunces',serif;font-weight:600;font-size:1.18rem;}
+  .brand-mark{
+    width:34px;height:34px;border-radius:50%;
+    background:linear-gradient(135deg,var(--teal-700),var(--teal-500));
+    display:flex;align-items:center;justify-content:center;color:white;flex-shrink:0;
+  }
+  .nav-links{display:flex;gap:28px;font-size:0.95rem;font-weight:600;color:var(--ink-soft);}
+  .nav-links a{text-decoration:none;transition:color .2s;}
+  .nav-links a:hover{color:var(--teal-700);}
+  .nav-cta{
+    background:var(--teal-900);color:white;border:none;
+    padding:10px 20px;border-radius:999px;font-weight:700;font-size:0.92rem;
+    transition:transform .18s ease, background .2s;
+  }
+  .nav-cta:hover{background:var(--teal-700);transform:translateY(-1px);}
+  @media (max-width:760px){ .nav-links{display:none;} }
+
+  /* ---------- Hero ---------- */
+  .hero{padding:64px 0 40px;}
+  .hero-grid{display:grid;grid-template-columns:1.15fr 1fr;gap:56px;align-items:center;}
+  @media (max-width:900px){ .hero-grid{grid-template-columns:1fr;gap:40px;} }
+
+  .eyebrow-note{
+    display:inline-flex;align-items:center;gap:8px;
+    background:var(--aqua-100);color:var(--teal-900);
+    padding:7px 14px;border-radius:999px;font-size:0.85rem;font-weight:700;
+    margin-bottom:20px;
+  }
+  .eyebrow-note::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--coral);}
+
+  .hero h1{
+    font-size:clamp(2.2rem,4.4vw,3.4rem);
+    font-weight:600;
+    line-height:1.08;
+    margin:0 0 18px;
+    max-width:15ch;
+  }
+  .hero p.lede{
+    font-size:1.08rem;color:var(--ink-soft);max-width:46ch;margin:0 0 30px;
+  }
+  .hero-actions{display:flex;flex-wrap:wrap;gap:14px;align-items:center;}
+
+  .btn-primary{
+    position:relative;overflow:hidden;
+    background:var(--coral);color:white;border:none;
+    padding:16px 30px;border-radius:999px;font-weight:800;font-size:1.02rem;
+    box-shadow:0 10px 24px -8px rgba(239,118,122,0.55);
+    transition:transform .2s ease, box-shadow .2s ease;
+  }
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 14px 30px -8px rgba(239,118,122,0.65);}
+  .btn-primary:active{transform:translateY(0);}
+  .btn-primary::after{
+    content:"";position:absolute;inset:0;border-radius:999px;
+    box-shadow:0 0 0 0 rgba(239,118,122,0.55);
+    animation:pulseRing 2.6s ease-out infinite;
+  }
+  @keyframes pulseRing{
+    0%{box-shadow:0 0 0 0 rgba(239,118,122,0.45);}
+    70%{box-shadow:0 0 0 14px rgba(239,118,122,0);}
+    100%{box-shadow:0 0 0 0 rgba(239,118,122,0);}
+  }
+  .btn-ghost{
+    background:transparent;color:var(--teal-900);border:1.5px solid var(--line);
+    padding:15px 24px;border-radius:999px;font-weight:700;font-size:0.98rem;
+    transition:border-color .2s, background .2s;
+  }
+  .btn-ghost:hover{border-color:var(--teal-500);background:var(--aqua-50);}
+
+  .quick-facts{display:flex;gap:26px;margin-top:34px;flex-wrap:wrap;}
+  .quick-fact b{display:block;font-family:'Fraunces',serif;font-size:1.5rem;color:var(--teal-900);}
+  .quick-fact span{font-size:0.85rem;color:var(--ink-soft);}
+
+  /* ---------- Window panel (hero visual) ---------- */
+  .day-panel{
+    background:linear-gradient(160deg,var(--teal-900),var(--teal-700) 70%);
+    border-radius:var(--radius-lg);
+    padding:30px 26px 26px;
+    color:white;
+    box-shadow:0 30px 60px -24px rgba(15,76,76,0.55);
+  }
+  .day-panel-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:22px;}
+  .day-panel-head h3{color:white;font-size:1.05rem;font-weight:500;margin:0;opacity:.9;}
+  .day-panel-head .clock{font-size:0.8rem;background:rgba(255,255,255,0.14);padding:5px 10px;border-radius:8px;}
+
+  .window-status{
+    display:flex;align-items:center;gap:10px;margin-bottom:18px;
+    background:rgba(255,255,255,0.08);border-radius:14px;padding:14px 16px;
+  }
+  .window-status .pulse-dot{width:10px;height:10px;border-radius:50%;background:#7BE0B0;flex-shrink:0;animation:blink 1.6s infinite;}
+  .window-status.closed .pulse-dot{background:rgba(255,255,255,0.4);animation:none;}
+  .window-status .status-text b{display:block;font-family:'Fraunces',serif;font-size:1.15rem;font-weight:600;}
+  .window-status .status-text span{font-size:0.82rem;opacity:.8;}
+
+  .window-bar-wrap{margin-bottom:18px;}
+  .window-bar-labels{display:flex;justify-content:space-between;font-size:0.78rem;opacity:.75;margin-bottom:6px;}
+  .window-bar{height:8px;border-radius:6px;background:rgba(255,255,255,0.14);overflow:hidden;position:relative;}
+  .window-bar-fill{height:100%;background:#7BE0B0;border-radius:6px;transition:width .4s ease;}
+
+  .day-panel-note{
+    background:rgba(255,255,255,0.08);border-radius:14px;padding:16px 18px;
+    font-size:0.92rem;
+  }
+  .day-panel-note strong{display:block;font-family:'Fraunces',serif;font-size:1.15rem;margin-bottom:4px;font-weight:600;}
+  .day-panel-note span{opacity:.85;font-size:0.85rem;}
+
+  /* ---------- Announcement ---------- */
+  .announce{
+    background:var(--aqua-100);
+    border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+    padding:12px 0;overflow:hidden;
+  }
+  .announce-track{
+    display:flex;gap:56px;white-space:nowrap;
+    animation:marquee 26s linear infinite;
+    font-size:0.9rem;font-weight:700;color:var(--teal-900);
+  }
+  .announce-track span{display:flex;align-items:center;gap:8px;}
+  .announce-track span::before{content:"●";color:var(--coral);font-size:0.5rem;}
+  @keyframes marquee{
+    0%{transform:translateX(0);}
+    100%{transform:translateX(-50%);}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .announce-track{animation:none;}
+    .btn-primary::after{animation:none;}
+  }
+
+  /* ---------- Info section ---------- */
+  .section{padding:76px 0;}
+  .section-head{max-width:52ch;margin-bottom:44px;}
+  .section-head .kicker{color:var(--coral-dark);font-weight:800;font-size:0.9rem;margin-bottom:10px;display:block;}
+  .section-head h2{font-size:clamp(1.7rem,3vw,2.3rem);font-weight:600;margin:0 0 12px;}
+  .section-head p{color:var(--ink-soft);margin:0;}
+
+  .info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
+  @media (max-width:860px){ .info-grid{grid-template-columns:1fr;} }
+  .info-card{
+    background:var(--white);
+    border:1px solid var(--line);
+    border-left:4px solid var(--teal-500);
+    border-radius:var(--radius-md);
+    padding:28px 26px;
+    box-shadow:var(--shadow-card);
+    transition:transform .22s ease, box-shadow .22s ease;
+  }
+  .info-card:hover{transform:translateY(-4px);box-shadow:0 20px 40px -18px rgba(15,76,76,0.28);}
+  .info-card .icon{
+    width:44px;height:44px;border-radius:12px;background:var(--aqua-100);
+    display:flex;align-items:center;justify-content:center;margin-bottom:16px;color:var(--teal-900);
+  }
+  .info-card h3{font-size:1.12rem;margin:0 0 8px;font-weight:600;}
+  .info-card p{margin:0;color:var(--ink-soft);font-size:0.94rem;}
+  .info-card ul{margin:10px 0 0;padding:0;list-style:none;font-size:0.92rem;color:var(--ink-soft);}
+  .info-card li{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px dashed var(--line);}
+  .info-card li:last-child{border-bottom:none;}
+  .info-card li b{color:var(--ink);font-weight:700;}
+
+  /* ---------- Footer ---------- */
+  footer{background:var(--teal-900);color:rgba(255,255,255,0.88);padding:60px 0 30px;margin-top:20px;}
+  .foot-grid{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:40px;margin-bottom:44px;}
+  @media (max-width:820px){ .foot-grid{grid-template-columns:1fr;} }
+  footer h4{font-family:'Fraunces',serif;font-weight:600;color:white;font-size:1.1rem;margin:0 0 14px;}
+  footer p, footer li{color:rgba(255,255,255,0.72);font-size:0.92rem;}
+  footer ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px;}
+  .map-frame{
+    border-radius:var(--radius-md);overflow:hidden;border:1px solid rgba(255,255,255,0.18);
+    aspect-ratio:16/10;background:rgba(255,255,255,0.06);
+  }
+  .map-frame iframe{width:100%;height:100%;border:0;filter:grayscale(0.15) contrast(1.05);}
+  .foot-bottom{
+    border-top:1px solid rgba(255,255,255,0.14);padding-top:22px;
+    display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;
+    font-size:0.85rem;color:rgba(255,255,255,0.55);
+  }
+
+  /* ---------- Modal ---------- */
+  .modal-backdrop{
+    position:fixed;inset:0;background:rgba(15,44,44,0.55);
+    display:none;align-items:center;justify-content:center;padding:20px;z-index:100;
+    backdrop-filter:blur(3px);
+  }
+  .modal-backdrop.open{display:flex;animation:fadeIn .22s ease;}
+  @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+  .modal{
+    background:var(--white);border-radius:var(--radius-lg);
+    width:100%;max-width:460px;max-height:92vh;overflow-y:auto;
+    box-shadow:0 40px 80px -20px rgba(0,0,0,0.35);
+    animation:modalUp .28s cubic-bezier(.2,.9,.3,1);
+  }
+  @keyframes modalUp{from{opacity:0;transform:translateY(18px) scale(.98);}to{opacity:1;transform:translateY(0) scale(1);}}
+  .modal-head{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:22px 26px 0;
+  }
+  .modal-head h3{margin:0;font-size:1.25rem;font-weight:600;}
+  .modal-close{
+    background:var(--aqua-50);border:none;width:34px;height:34px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;color:var(--ink-soft);font-size:1.1rem;
+    transition:background .2s;
+  }
+  .modal-close:hover{background:var(--aqua-100);}
+  .modal-body{padding:22px 26px 28px;}
+
+  .field{margin-bottom:16px;}
+  .field label{display:block;font-size:0.85rem;font-weight:700;color:var(--ink);margin-bottom:6px;}
+  .field input{
+    width:100%;padding:12px 14px;border-radius:var(--radius-sm);
+    border:1.5px solid var(--line);font-family:inherit;font-size:0.96rem;
+    background:var(--aqua-50);transition:border-color .2s, background .2s;
+  }
+  .field input:focus{border-color:var(--teal-500);background:white;}
+
+  .preview-card{
+    background:var(--aqua-50);border:1px solid var(--line);border-radius:var(--radius-md);
+    padding:18px 20px;margin:6px 0 18px;
+  }
+  .preview-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;}
+  .preview-row .lbl{font-size:0.86rem;color:var(--ink-soft);font-weight:600;}
+  .preview-queue{
+    font-family:'Fraunces',serif;font-size:2rem;font-weight:700;color:var(--coral-dark);
+  }
+  .preview-time{font-family:'Fraunces',serif;font-size:1.3rem;font-weight:600;color:var(--teal-900);}
+
+  .modal-actions{display:flex;flex-direction:column;gap:10px;margin-top:18px;}
+  .btn-confirm{
+    background:var(--teal-900);color:white;border:none;border-radius:999px;
+    padding:15px;font-weight:800;font-size:0.98rem;transition:background .2s, transform .18s;
+  }
+  .btn-confirm:hover{background:var(--teal-700);}
+  .btn-confirm:disabled{background:#B9CBC9;cursor:not-allowed;}
+  .btn-cancel{
+    background:transparent;border:1.5px solid var(--line);color:var(--ink-soft);
+    border-radius:999px;padding:13px;font-weight:700;font-size:0.92rem;transition:border-color .2s,color .2s;
+  }
+  .btn-cancel:hover{border-color:var(--coral-dark);color:var(--coral-dark);}
+
+  .error-banner{
+    display:none;background:#FCEAEA;color:var(--coral-dark);border:1px solid #F3C6C7;
+    padding:10px 14px;border-radius:10px;font-size:0.85rem;font-weight:600;margin-bottom:14px;
+  }
+  .error-banner.show{display:block;}
+
+  /* Closed-window prompt */
+  .closed-view{text-align:center;padding:6px 4px 4px;}
+  .closed-icon{
+    width:60px;height:60px;border-radius:50%;background:var(--aqua-100);
+    display:flex;align-items:center;justify-content:center;margin:0 auto 16px;color:var(--teal-700);
+  }
+  .closed-view h3{margin:0 0 8px;font-size:1.2rem;}
+  .closed-view p{color:var(--ink-soft);margin:0 0 20px;font-size:0.95rem;}
+  .closed-view .big-time{
+    font-family:'Fraunces',serif;font-weight:700;font-size:1.6rem;color:var(--teal-900);
+    background:var(--aqua-50);border:1px solid var(--line);border-radius:var(--radius-md);
+    padding:14px;margin-bottom:20px;
+  }
+
+  /* Success screen */
+  .success-view{text-align:center;padding:8px 4px 4px;}
+  .success-check{
+    width:64px;height:64px;border-radius:50%;background:var(--aqua-100);
+    display:flex;align-items:center;justify-content:center;margin:0 auto 18px;
+    color:var(--teal-700);
+    animation:pop .4s cubic-bezier(.2,.9,.3,1.4);
+  }
+  @keyframes pop{from{transform:scale(0.5);opacity:0;}to{transform:scale(1);opacity:1;}}
+  .success-view h3{margin:0 0 6px;font-size:1.35rem;}
+  .success-view p.sub{color:var(--ink-soft);margin:0 0 22px;font-size:0.94rem;}
+  .success-stats{display:flex;gap:12px;margin-bottom:22px;}
+  .success-stat{
+    flex:1;background:var(--aqua-50);border:1px solid var(--line);border-radius:var(--radius-md);
+    padding:16px 8px;
+  }
+  .success-stat b{display:block;font-family:'Fraunces',serif;font-size:1.5rem;color:var(--teal-900);}
+  .success-stat span{font-size:0.78rem;color:var(--ink-soft);}
+</style>
+</head>
+<body>
+
+<header class="site">
+  <nav class="nav">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 3v18M3 12h18" stroke="white" stroke-width="2.4" stroke-linecap="round"/></svg>
+      </span>
+      ABC Health
+    </div>
+    <div class="nav-links">
+      <a href="#hours">Hours</a>
+      <a href="#doctor">Doctor</a>
+      <a href="#location">Location</a>
+    </div>
+    <button class="nav-cta" onclick="openBookingModal()">Book appointment</button>
+  </nav>
+</header>
+
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="eyebrow-note">Bookings open daily, 10:00 AM – 09:00 PM</span>
+      <h1>Care that fits into your week, not the other way around.</h1>
+      <p class="lede">Book your consultation in under a minute. We'll tell you your exact place in line and your expected consultation time before you confirm anything.</p>
+      <div class="hero-actions">
+        <button class="btn-primary" onclick="openBookingModal()">Book Appointment</button>
+        <a href="#hours" class="btn-ghost">See clinic hours</a>
+      </div>
+      <div class="quick-facts">
+        <div class="quick-fact"><b>15 min</b><span>per consultation slot</span></div>
+        <div class="quick-fact"><b>10:00 AM</b><span>bookings open</span></div>
+        <div class="quick-fact"><b>09:00 PM</b><span>last booking taken</span></div>
+      </div>
+    </div>
+
+    <div class="day-panel">
+      <div class="day-panel-head">
+        <h3>Today's booking window</h3>
+        <span class="clock" id="liveClock">—</span>
+      </div>
+
+      <div class="window-status" id="windowStatus">
+        <span class="pulse-dot"></span>
+        <div class="status-text">
+          <b id="statusHeadline">Checking…</b>
+          <span id="statusSub">&nbsp;</span>
+        </div>
+      </div>
+
+      <div class="window-bar-wrap">
+        <div class="window-bar-labels"><span>10:00 AM</span><span>09:00 PM</span></div>
+        <div class="window-bar"><div class="window-bar-fill" id="windowBarFill" style="width:0%"></div></div>
+      </div>
+
+      <div class="day-panel-note">
+        <strong id="queueTodayLabel">— patients booked so far today</strong>
+        <span>Queue resets each morning. First booking gets the 02:00 PM slot.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="announce">
+  <div class="wrap">
+    <div class="announce-track" id="announceTrack">
+      <span>Bookings open daily from 10:00 AM to 09.00 PM</span>
+      <span>Please arrive 10 minutes before your queue time</span>
+      <span>Bring your previous prescription, if any</span>
+      <span>Bookings open daily from 10:00 AM to 09.00 PM</span>
+      <span>Please arrive 10 minutes before your queue time</span>
+      <span>Bring your previous prescription, if any</span>
+    </div>
+  </div>
+</div>
+
+<section class="section" id="hours">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="kicker">Before you book</span>
+      <h2>Everything you need to plan your visit</h2>
+      <p>Availability, doctor details and how your queue number is worked out — all in one place.</p>
+    </div>
+    <div class="info-grid">
+      <div class="info-card">
+        <div class="icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 7v5l3 3M12 21a9 9 0 100-18 9 9 0 000 18z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h3>Booking hours</h3>
+        <ul>
+          <li><span>Every day</span><b>10:00 AM – 09.00 PM</b></li>
+          <li><span>First slot</span><b>02:00 PM</b></li>
+          <li><span>Per patient</span><b>15 minutes</b></li>
+        </ul>
+      </div>
+      <div class="info-card" id="doctor">
+        <div class="icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M20 21a8 8 0 10-16 0M12 11a4 4 0 100-8 4 4 0 000 8z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h3>Consulting doctor</h3>
+        <p>Dr. Rathnayake, General - MBBS</p>
+      </div>
+      <div class="info-card">
+        <div class="icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 20s7-5.7 7-11a7 7 0 10-14 0c0 5.3 7 11 7 11z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="9" r="2.4" stroke="currentColor" stroke-width="1.8"/></svg>
+        </div>
+        <h3>How your queue number works</h3>
+        <p>Each patient gets a 15-minute slot in the order they book, starting from 10:00 AM. Bookings close at 09.00 PM and the queue resets fresh the next morning.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer id="location">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <h4>ABC Health Medical Center</h4>
+        <p>Udugam Road, Makubura, Sri Lanka</p>
+        <p>Bookings open every day · 10:00 AM – 09.00 PM</p>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <ul>
+          <li>Reception: +94 91 222 4567</li>
+          <li>Mobile: +94 77 123 4567</li>
+          <li>reception@abchealth.example</li>
+        </ul>
+      </div>
+      <div>
+        <h4>Find us</h4>
+        <div class="map-frame">
+          <iframe
+            title="ABC Health Medical Center location"
+            src="https://www.google.com/maps?q=Udugam+Road,+Makubura,+Sri+Lanka&output=embed"
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 ABC Health Medical Center</span>
+      <span>Design by Sample</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ================= BOOKING MODAL ================= -->
+<div class="modal-backdrop" id="modalBackdrop">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+
+    <!-- VIEW: booking closed prompt -->
+    <div id="viewClosed" style="display:none;">
+      <div class="modal-head">
+        <h3 id="modalTitleClosed">Bookings aren't open right now</h3>
+        <button class="modal-close" onclick="closeBookingModal()" aria-label="Close">✕</button>
+      </div>
+      <div class="modal-body closed-view">
+        <div class="closed-icon">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M12 7v5l3 3M12 21a9 9 0 100-18 9 9 0 000 18z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <p id="closedMessage">Appointments start from 10:00 AM.</p>
+        <div class="big-time">10:00 AM – 09.00 PM</div>
+        <button class="btn-confirm" onclick="closeBookingModal()">Got it</button>
+      </div>
+    </div>
+
+    <!-- VIEW: form -->
+    <div id="viewForm" style="display:none;">
+      <div class="modal-head">
+        <h3 id="modalTitle">Book your appointment</h3>
+        <button class="modal-close" onclick="closeBookingModal()" aria-label="Close">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="error-banner" id="formError"></div>
+
+        <div class="preview-card">
+          <div class="preview-row">
+            <span class="lbl">Your queue number</span>
+            <span class="preview-queue" id="previewQueue">—</span>
+          </div>
+          <div class="preview-row">
+            <span class="lbl">Estimated consultation time</span>
+            <span class="preview-time" id="previewTime">—</span>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="fld-name">Full name</label>
+          <input id="fld-name" type="text" placeholder="e.g. Kavindu Perera" autocomplete="name">
+        </div>
+        <div class="field">
+          <label for="fld-phone">Phone number</label>
+          <input id="fld-phone" type="tel" placeholder="e.g. 077 123 4567" autocomplete="tel">
+        </div>
+        <div class="field">
+          <label for="fld-age">Age</label>
+          <input id="fld-age" type="number" min="0" max="120" placeholder="e.g. 34">
+        </div>
+
+        <div class="modal-actions">
+          <button class="btn-confirm" id="confirmBtn" onclick="confirmBooking()">Accept &amp; Confirm Slot</button>
+          <button class="btn-cancel" onclick="closeBookingModal()">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW: success -->
+    <div id="viewSuccess" style="display:none;">
+      <div class="modal-head">
+        <h3>You're booked</h3>
+        <button class="modal-close" onclick="closeBookingModal()" aria-label="Close">✕</button>
+      </div>
+      <div class="modal-body success-view">
+        <div class="success-check">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <p class="sub">Your appointment is confirmed at ABC Health Medical Center.</p>
+        <div class="success-stats">
+          <div class="success-stat">
+            <b id="finalQueue">—</b>
+            <span>Queue number</span>
+          </div>
+          <div class="success-stat">
+            <b id="finalTime">—</b>
+            <span>Consultation time</span>
+          </div>
+        </div>
+        <button class="btn-confirm" onclick="closeBookingModal()">Done</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+/* =========================================================================
+   CONFIGURATION
+   This must point at your deployed Google Apps Script Web App (see Code.gs).
+   The sheet is the single source of truth for the queue count — every
+   browser/device now reads the SAME number from it, instead of each device
+   keeping its own local count. Clear the "Bookings" sheet rows each morning
+   to reset the queue for the day.
+   ========================================================================= */
+  const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby55-6xBYXdX7JXmGEYXfiswSgYd8en4S9xSA_okB_9XRvHWbLyfGoV62tZzCDjBfat/exec";
+
+  const OPEN_HOUR = 10;          // booking WINDOW opens at 10:00 AM (people can submit a booking)
+  const LAST_BOOKING_HOUR = 21;  // last booking accepted at 09.00 PM
+  const SLOT_START_HOUR = 14;    // actual CONSULTATION slots start at 02:00 PM
+  const SLOT_MINUTES = 15;
+  const STORAGE_KEY = "abc_bookings_cache_v3"; // OFFLINE FALLBACK ONLY — never the source of truth
+
+  /* ---------- local cache: used only if the sheet can't be reached ---------- */
+  function todayKey(){
+    return new Date().toISOString().split("T")[0];
+  }
+  function loadLocalCache(){
+    try{
+      const raw = localStorage.getItem(STORAGE_KEY);
+      const data = raw ? JSON.parse(raw) : { date: todayKey(), count: 0 };
+      if (data.date !== todayKey()) return { date: todayKey(), count: 0 };
+      return data;
+    }catch(e){ return { date: todayKey(), count: 0 }; }
+  }
+  function saveLocalCache(count){
+    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify({ date: todayKey(), count })); }catch(e){}
+  }
+
+  /* ---------- fetch the REAL count from the Google Sheet ---------- */
+  async function fetchServerCount(){
+    if (!GOOGLE_SCRIPT_URL){
+      return loadLocalCache().count;
+    }
+    try{
+      const res = await fetch(GOOGLE_SCRIPT_URL + "?_=" + Date.now());
+      const data = await res.json();
+      if (data.status === "ok" && typeof data.count === "number"){
+        saveLocalCache(data.count);
+        return data.count;
+      }
+      throw new Error(data.message || "Unexpected response from booking sheet");
+    }catch(err){
+      console.warn("Could not reach booking sheet, using cached count:", err);
+      return loadLocalCache().count;
+    }
+  }
+
+  function slotFromCount(count){
+    const queueNumber = count + 1;
+    const start = new Date(); start.setHours(SLOT_START_HOUR,0,0,0);
+    start.setMinutes(start.getMinutes() + count * SLOT_MINUTES);
+    const timeLabel = start.toLocaleTimeString([], {hour:'numeric', minute:'2-digit'});
+    return { queueNumber, timeLabel };
+  }
+
+  /* ---------- booking window ---------- */
+  function windowState(){
+    const now = new Date();
+    const openAt = new Date(now); openAt.setHours(OPEN_HOUR,0,0,0);
+    const closeAt = new Date(now); closeAt.setHours(LAST_BOOKING_HOUR,0,0,0);
+
+    if (now < openAt) return { state:"before", openAt, closeAt, now };
+    if (now > closeAt) return { state:"after", openAt, closeAt, now };
+    return { state:"open", openAt, closeAt, now };
+  }
+
+  /* ---------- hero panel ---------- */
+  async function renderHeroPanel(){
+    const ws = windowState();
+    const statusBox = document.getElementById("windowStatus");
+    const headline = document.getElementById("statusHeadline");
+    const sub = document.getElementById("statusSub");
+    const fill = document.getElementById("windowBarFill");
+
+    const count = await fetchServerCount();
+    document.getElementById("queueTodayLabel").textContent =
+      `${count} patient${count === 1 ? "" : "s"} booked so far today`;
+
+    if (ws.state === "before"){
+      statusBox.classList.add("closed");
+      const mins = Math.round((ws.openAt - ws.now) / 60000);
+      const h = Math.floor(mins/60), m = mins % 60;
+      headline.textContent = "Bookings open at 10:00 AM";
+      sub.textContent = h > 0 ? `Opens in ${h}h ${m}m` : `Opens in ${m}m`;
+      fill.style.width = "0%";
+    } else if (ws.state === "after"){
+      statusBox.classList.add("closed");
+      headline.textContent = "Bookings closed for today";
+      sub.textContent = "Come back tomorrow from 10:00 AM";
+      fill.style.width = "100%";
+    } else {
+      statusBox.classList.remove("closed");
+      headline.textContent = "Bookings are open now";
+      sub.textContent = "Closes at 09.00 PM";
+      const total = ws.closeAt - ws.openAt;
+      const elapsed = ws.now - ws.openAt;
+      fill.style.width = Math.min(100, Math.max(0, (elapsed/total)*100)) + "%";
+    }
+  }
+
+  function tickClock(){
+    const el = document.getElementById("liveClock");
+    el.textContent = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+  }
+
+  /* ---------- modal control ---------- */
+  async function openBookingModal(){
+    document.getElementById("modalBackdrop").classList.add("open");
+    document.getElementById("viewClosed").style.display = "none";
+    document.getElementById("viewForm").style.display = "none";
+    document.getElementById("viewSuccess").style.display = "none";
+
+    const ws = windowState();
+    if (ws.state !== "open"){
+      const msg = ws.state === "before"
+        ? "Appointments start from 10:00 AM. Please come back then to book."
+        : "Bookings are closed for today. Appointments start from 10:00 AM tomorrow.";
+      document.getElementById("closedMessage").textContent = msg;
+      document.getElementById("viewClosed").style.display = "block";
+      return;
+    }
+
+    document.getElementById("viewForm").style.display = "block";
+    await resetForm();
+  }
+
+  function closeBookingModal(){
+    document.getElementById("modalBackdrop").classList.remove("open");
+    renderHeroPanel();
+  }
+
+  document.getElementById("modalBackdrop").addEventListener("click", (e)=>{
+    if (e.target.id === "modalBackdrop") closeBookingModal();
+  });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeBookingModal(); });
+
+  async function resetForm(){
+    ["fld-name","fld-phone","fld-age"].forEach(id => document.getElementById(id).value = "");
+    document.getElementById("formError").classList.remove("show");
+    document.getElementById("previewQueue").textContent = "…";
+    document.getElementById("previewTime").textContent = "…";
+
+    const count = await fetchServerCount();
+    const slot = slotFromCount(count);
+    document.getElementById("previewQueue").textContent = "#" + String(slot.queueNumber).padStart(2,"0");
+    document.getElementById("previewTime").textContent = slot.timeLabel;
+  }
+
+  /* ---------- validation + confirm ---------- */
+  function validateForm(){
+    const name = document.getElementById("fld-name").value.trim();
+    const phone = document.getElementById("fld-phone").value.trim();
+    const age = document.getElementById("fld-age").value.trim();
+    const errBox = document.getElementById("formError");
+
+    if (!name || name.length < 2){
+      errBox.textContent = "Please enter the patient's full name.";
+      errBox.classList.add("show");
+      return false;
+    }
+    if (!/^[0-9+()\-\s]{7,15}$/.test(phone)){
+      errBox.textContent = "Please enter a valid phone number.";
+      errBox.classList.add("show");
+      return false;
+    }
+    if (!age || age < 0 || age > 120){
+      errBox.textContent = "Please enter a valid age.";
+      errBox.classList.add("show");
+      return false;
+    }
+    errBox.classList.remove("show");
+    return true;
+  }
+
+  async function confirmBooking(){
+    // re-check the window in case it closed while the form was open
+    const ws = windowState();
+    if (ws.state !== "open"){
+      document.getElementById("viewForm").style.display = "none";
+      document.getElementById("closedMessage").textContent =
+        "Bookings just closed for today. Appointments start from 10:00 AM tomorrow.";
+      document.getElementById("viewClosed").style.display = "block";
+      return;
+    }
+
+    if (!validateForm()) return;
+
+    const name = document.getElementById("fld-name").value.trim();
+    const phone = document.getElementById("fld-phone").value.trim();
+    const age = document.getElementById("fld-age").value.trim();
+
+    const confirmBtn = document.getElementById("confirmBtn");
+    const errBox = document.getElementById("formError");
+    confirmBtn.disabled = true;
+    confirmBtn.textContent = "Booking…";
+
+    try {
+      // The server assigns the REAL queue number/time from the sheet —
+      // this is what keeps two people booking at once from colliding,
+      // and what keeps every browser in sync.
+      const result = await submitToGoogleSheet({
+        name, phone, age, timestamp: new Date().toISOString()
+      });
+
+      document.getElementById("finalQueue").textContent = "#" + String(result.queueNumber).padStart(2,"0");
+      document.getElementById("finalTime").textContent = result.consultationTime;
+      document.getElementById("viewForm").style.display = "none";
+      document.getElementById("viewSuccess").style.display = "block";
+
+    } catch (err) {
+      errBox.textContent = "Could not save your booking — please check your connection and try again.";
+      errBox.classList.add("show");
+      console.error(err);
+    } finally {
+      confirmBtn.disabled = false;
+      confirmBtn.textContent = "Accept & Confirm Slot";
+    }
+  }
+
+  async function submitToGoogleSheet(booking){
+    if (!GOOGLE_SCRIPT_URL) throw new Error("Booking backend not configured");
+    const res = await fetch(GOOGLE_SCRIPT_URL, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" }, // avoids a CORS preflight
+      body: JSON.stringify(booking)
+    });
+    const data = await res.json();
+    if (data.status !== "ok") throw new Error(data.message || "Booking failed");
+    return data; // { status, queueNumber, consultationTime }
+  }
+
+  /* ---------- init ---------- */
+  window.addEventListener("DOMContentLoaded", () => {
+    renderHeroPanel();
+    tickClock();
+    setInterval(() => { tickClock(); renderHeroPanel(); }, 30000);
+  });
+</script>
+
+</body>
+</html>
